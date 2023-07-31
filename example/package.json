@@ -1,0 +1,19 @@
+{
+  "name": "ethereum-deposit-example",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "ts-node": "ts-node --esm",
+    "test": "ts-node --esm src/index.ts"
+  },
+  "author": "Restake <social@restake.net>",
+  "license": "MIT",
+  "dependencies": {
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^20.4.5",
+    "ts-node": "10.9.1",
+    "typescript": "^5.1.6"
+  }
+}

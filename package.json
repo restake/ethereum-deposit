@@ -1,0 +1,42 @@
+{
+  "name": "@restake/stake.js",
+  "version": "0.0.1",
+  "description": "Restake staking SDK",
+  "main": "disk/index.cjs",
+  "module": "disk/index.js",
+  "files": [
+    "LICENSE",
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts",
+      "source": "./src/index.ts"
+    }
+  },
+  "engines": {
+    "node": ">=18.15.0"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "author": "Restake <social@restake.net>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.4.5",
+    "tsup": "^7.1.0",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@chainsafe/bls": "^7.1.2",
+    "@chainsafe/bls-keygen": "^0.4.0",
+    "@chainsafe/blst": "^0.2.9",
+    "@chainsafe/ssz": "^0.11.1",
+    "bip39": "^3.1.0"
+  }
+}
