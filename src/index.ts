@@ -1,1 +1,1 @@
-export { Credential } from "./credentials.ts";
+export { Credential, CredentialList } from "./credentials.ts";

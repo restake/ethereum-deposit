@@ -92,3 +92,13 @@ export class Credential {
   }
 
 }
+
+export class CredentialList extends Array<Credential> {
+  get validatorKeys(): string[] {
+    return this.map(credential => credential.signingSecretKey.toHex());
+  }
+
+  get depositDataJson(): Record<string, string | number>[] {
+    return this.map(credential => credential.depositDataJson);
+  }
+}
