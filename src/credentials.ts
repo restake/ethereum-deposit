@@ -5,6 +5,7 @@ import { ValueOf } from '@chainsafe/ssz';
 import { computeDepositDomain, computeSigningRoot, DepositMessage, SignedDeposit, DepositData } from './signing.ts';
 import { BaseChainSetting, getChainSetting } from './settings.ts';
 import { MIN_DEPOSIT_AMOUNT, MAX_DEPOSIT_AMOUNT } from './constants.ts';
+import { EthereumDepositData } from './types.ts';
 
 export class Credential {
   withdrawalSecretKey: SecretKey;
@@ -63,7 +64,7 @@ export class Credential {
     };
   }
 
-  get depositData(): ValueOf<typeof DepositData> {
+  get rawDepositData(): ValueOf<typeof DepositData> {
     const signedDeposit = this.signedDeposit;
 
     const depositData = {
@@ -76,29 +77,49 @@ export class Credential {
     return depositData ;
   }
 
-  get depositDataJson(): Record<string, string | number> {
-    const depositData = this.depositData;
+  get depositData(): EthereumDepositData {
+    const rawDepositData = this.rawDepositData;
 
     return {
-      pubkey: Buffer.from(depositData.pubkey).toString('hex'),
-      withdrawal_credentials: Buffer.from(depositData.withdrawal_credentials).toString('hex'),
-      amount: depositData.amount, // Keep amount as a number
-      signature: Buffer.from(depositData.signature).toString('hex'),
-      deposit_message_root: Buffer.from(depositData.deposit_message_root).toString('hex'),
-      deposit_data_root: Buffer.from(depositData.deposit_data_root).toString('hex'),
-      fork_version: Buffer.from(depositData.fork_version).toString('hex'),
-      network_name: new TextDecoder().decode(depositData.network_name), // Decode to a human-readable string
+      pubkey: Buffer.from(rawDepositData.pubkey).toString('hex'),
+      withdrawal_credentials: Buffer.from(rawDepositData.withdrawal_credentials).toString('hex'),
+      amount: BigInt(rawDepositData.amount), // Keep amount as a number
+      signature: Buffer.from(rawDepositData.signature).toString('hex'),
+      deposit_message_root: Buffer.from(rawDepositData.deposit_message_root).toString('hex'),
+      deposit_data_root: Buffer.from(rawDepositData.deposit_data_root).toString('hex'),
+      fork_version: Buffer.from(rawDepositData.fork_version).toString('hex'),
+      network_name: new TextDecoder().decode(rawDepositData.network_name), // Decode to a human-readable string
     };
   }
 
 }
 
 export class CredentialList extends Array<Credential> {
-  get validatorKeys(): string[] {
-    return this.map(credential => credential.signingSecretKey.toHex());
+  constructor(mnemonic: string, nValidators: number, chain: string, amount: number, withdrawalAddressHex: string) {
+    super();
+    for (let i = 0; i < nValidators; i++) {
+      const credential = new Credential(mnemonic, i, chain, amount, withdrawalAddressHex);
+      this.push(credential);
+    }
   }
 
-  get depositDataJson(): Record<string, string | number>[] {
-    return this.map(credential => credential.depositDataJson);
+  get signingSecretKeys(): SecretKey[] {
+    return this.map(credential => credential.signingSecretKey);
+  }
+
+  get signingPublicKeys(): PublicKey[] {
+    return this.map(credential => credential.signingPublicKey);
+  }
+
+  get withdrawalSecretKeys(): SecretKey[] {
+    return this.map(credential => credential.withdrawalSecretKey);
+  }
+
+  get withdrawalPublicKeys(): PublicKey[] {
+    return this.map(credential => credential.withdrawalPublicKey);
+  }
+
+  get depositData(): EthereumDepositData[] {
+    return this.map(credential => credential.depositData);
   }
 }
