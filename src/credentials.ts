@@ -95,12 +95,12 @@ export class Credential {
 }
 
 export class CredentialList extends Array<Credential> {
-  constructor(mnemonic: string, nValidators: number, chain: string, amounts: number[] | number, withdrawalAddressHex: string) {
+  constructor(mnemonic: string, nValidators: number, chain: string, amounts: number[] | number, withdrawalAddressHex: string, startIndex: number = 0) {
     if (Array.isArray(amounts) && amounts.length !== nValidators) {
       throw new Error("Parameter 'amounts' must be a number or an Array of numbers with length equal to number of validators");
     }
     super();
-    for (let i = 0; i < nValidators; i++) {
+    for (let i = startIndex; i < startIndex + nValidators; i++) {
       let amount;
       if (typeof amounts === 'number') {
         amount = amounts;
