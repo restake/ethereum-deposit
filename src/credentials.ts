@@ -95,9 +95,18 @@ export class Credential {
 }
 
 export class CredentialList extends Array<Credential> {
-  constructor(mnemonic: string, nValidators: number, chain: string, amount: number, withdrawalAddressHex: string) {
+  constructor(mnemonic: string, nValidators: number, chain: string, amounts: number[] | number, withdrawalAddressHex: string) {
+    if (Array.isArray(amounts) && amounts.length !== nValidators) {
+      throw new Error("Parameter 'amounts' must be a number or an Array of numbers with length equal to number of validators");
+    }
     super();
     for (let i = 0; i < nValidators; i++) {
+      let amount;
+      if (typeof amounts === 'number') {
+        amount = amounts;
+      } else {
+        amount = amounts[i];
+      }
       const credential = new Credential(mnemonic, i, chain, amount, withdrawalAddressHex);
       this.push(credential);
     }
