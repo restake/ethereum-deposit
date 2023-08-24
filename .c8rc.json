@@ -5,7 +5,9 @@
         "src/**/!(*.test.*).[tj]s?(x)"
     ],
     "exclude": [
-        "src/tests/**/*.*"
+        "src/tests/**/*.*",
+        "src/index.ts",
+        "src/types.ts"
     ],
     "reporter": [
         "html",

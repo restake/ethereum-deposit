@@ -1,6 +1,6 @@
 import { CredentialList, Credential } from "../credentials.ts";
 import { expect } from 'chai';
-import { EthereumDepositData } from "../types.ts";
+import type { EthereumDepositData } from "../types.ts";
 import { getChainSetting } from "../settings.ts";
 import { MAX_DEPOSIT_AMOUNT, MIN_DEPOSIT_AMOUNT } from "../constants.ts";
 
@@ -86,7 +86,7 @@ describe("CredentialList", () => {
         expect(credentialList).instanceOf(CredentialList).and.to.be.lengthOf(defaultValidatorsCount);
     });
 
-    it(`properly returns deposit data of ${defaultValidatorsCount} validators`, () => {
+    it(`credential list properly returns deposit data of ${defaultValidatorsCount} validators`, () => {
         expect(credentialList.depositData).to.be.lengthOf(defaultValidatorsCount);
     });
 
