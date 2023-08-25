@@ -4,4 +4,3 @@
 [![Codecov](https://codecov.io/gh/restake/ethereum-deposit/graph/badge.svg?token=IV8HKHJ5L6)](https://codecov.io/gh/restake/ethereum-deposit)
 
 TypeScript library for rapidly generating Ethereum validator keys.
-
