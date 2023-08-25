@@ -17,7 +17,7 @@ const ForkData = new ContainerType({
 
 function computeForkDataRoot(currentVersion: Uint8Array, genesisValidatorsRoot: Uint8Array): Uint8Array {
   if (currentVersion.length !== 4) {
-    throw new Error(`For version should be in 4 bytes, got ${currentVersion.length}`);
+    throw new Error(`Fork version should be 4 bytes, got ${currentVersion.length}`);
   }
   return ForkData.hashTreeRoot({
     currentVersion,
@@ -31,15 +31,15 @@ function computeDepositForkDataRoot(currentVersion: Uint8Array): Uint8Array {
 
 export function computeDepositDomain(forkVersion: Uint8Array): Uint8Array {
   if (forkVersion.length !== 4) {
-    throw new Error(`For version should be in 4 bytes, got ${forkVersion.length}`);
+    throw new Error(`Fork version should be 4 bytes, got ${forkVersion.length}`);
   }
-  const forkDataRoot = computeDepositForkDataRoot(forkVersion); 
+  const forkDataRoot = computeDepositForkDataRoot(forkVersion);
   return new Uint8Array([...DOMAIN_DEPOSIT, ...forkDataRoot.slice(0, 28)]);
 }
 
 export function computeBlsToExecutionChangeDomain(forkVersion: Uint8Array, genesisValidatorsRoot: Uint8Array): Uint8Array {
   if (forkVersion.length !== 4) {
-    throw new Error(`For version should be in 4 bytes, got ${forkVersion.length}`);
+    throw new Error(`Fork version should be 4 bytes, got ${forkVersion.length}`);
   }
   const forkDataRoot = computeForkDataRoot(forkVersion, genesisValidatorsRoot);
   return new Uint8Array([...DOMAIN_BLS_TO_EXECUTION_CHANGE, ...forkDataRoot.slice(0, 28)]);
@@ -47,7 +47,7 @@ export function computeBlsToExecutionChangeDomain(forkVersion: Uint8Array, genes
 
 export function computeSigningRoot<V>(sszObject: V, type: Type<V>, domain: Uint8Array): Uint8Array {
   if (domain.length !== 32) {
-    throw new Error(`Domain should be in 32 bytes, got ${domain.length}`);
+    throw new Error(`Domain should be 32 bytes, got ${domain.length}`);
   }
   const signingRoot = SigningData.hashTreeRoot({
     object_root: type.hashTreeRoot(sszObject),
