@@ -1,0 +1,158 @@
+version: 2.1
+
+orbs:
+  node: "circleci/node@5.1.0"
+  codecov: "codecov/codecov@3.2.4"
+
+parameters:
+  node_version:
+    type: "string"
+    default: ""
+  pnpm_version:
+    type: "string"
+    default: "8.5.1"
+
+node_executor: &node_executor
+    docker:
+      - image: "cimg/base:stable"
+
+nodejs_install: &nodejs_install
+  node/install:
+    node-version: "" # uses .nvmrc when available
+
+pnpm_restore_cache: &pnpm_restore_cache
+  restore_cache:
+    name: "Restore pnpm package cache"
+    keys:
+      - pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
+
+pnpm_save_cache: &pnpm_save_cache
+  save_cache:
+    name: "Save pnpm package cache"
+    key: pnpm-packages-{{ checksum "pnpm-lock.yaml" }}
+    paths:
+      - node_modules
+
+pnpm_setup: &pnpm_setup
+  run:
+    name: "Setup pnpm"
+    command: |
+      corepack enable
+      corepack prepare pnpm@<< pipeline.parameters.pnpm_version >> --activate
+
+jobs:
+  test:
+    <<: *node_executor
+    steps:
+      - checkout
+      - <<: *pnpm_restore_cache
+      - <<: *nodejs_install
+      - <<: *pnpm_setup
+      - run:
+          name: "Install packages"
+          command: pnpm install
+      - run:
+          name: "Run all tests with coverage"
+          command: pnpm run coverage
+      - <<: *pnpm_save_cache
+
+  lint:
+    <<: *node_executor
+    steps:
+      - checkout
+      - <<: *pnpm_restore_cache
+      - <<: *nodejs_install
+      - <<: *pnpm_setup
+      - run:
+          name: "Install packages"
+          command: pnpm install
+      - run:
+          name: "Lint all files"
+          command: pnpm run lint
+      - <<: *pnpm_save_cache
+
+  build:
+    <<: *node_executor
+    steps:
+      - checkout
+      - <<: *pnpm_restore_cache
+      - <<: *nodejs_install
+      - <<: *pnpm_setup
+      - run:
+          name: "Install packages"
+          command: pnpm install
+      - run:
+          name: "Build package"
+          command: pnpm run build
+      - <<: *pnpm_save_cache
+
+  publish:
+    <<: *node_executor
+    steps:
+      - checkout
+      - <<: *pnpm_restore_cache
+      - <<: *nodejs_install
+      - <<: *pnpm_setup
+      - run:
+          name: "Install packages"
+          command: pnpm install
+      - run:
+          name: "Adjust package version"
+          command: |
+            git config --local user.email "dev@restake.net"
+            git config --local user.name "Restake Bot"
+
+            set -x
+
+            VERSION="<< pipeline.git.tag >>"
+            if [ -z "${VERSION}" ]; then
+              commit="$(git rev-parse HEAD)"
+              VERSION="0.0.0-experimental-${commit}"
+            fi
+
+            pnpm version --no-git-tag-version "${VERSION}"
+      - run:
+          name: "Build package"
+          command: pnpm run build
+      - run:
+          name: "Publish package"
+          command: |
+            pnpm set "//registry.npmjs.org/:_authToken=${RESTAKE_NPM_TOKEN}"
+            git status
+
+            set -x
+
+            publish_args=(--no-git-checks)
+            if ! [ "<< pipeline.git.branch >>" = "master" ]; then
+              publish_args+=(--dry-run)
+            fi
+
+            if (pnpm pkg get version | grep -q "experimental-"); then
+              publish_args+=(--tag "experimental")
+            fi
+
+            pnpm publish "${publish_args[@]}"
+      - <<: *pnpm_save_cache
+
+workflows:
+  build:
+    jobs:
+      - lint
+      - test:
+          post-steps:
+            - codecov/upload
+      - build:
+          requires:
+            - lint
+            - test
+      - publish:
+          context: "restake-npm-context"
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+            tags:
+              only:
+                - "/v.*/"

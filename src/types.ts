@@ -1,4 +1,4 @@
-export type { SecretKey, PublicKey } from '@chainsafe/bls/types';
+export type { SecretKey, PublicKey } from "@chainsafe/bls/types";
 
 export type EthereumDepositData = {
   pubkey: string;

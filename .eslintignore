@@ -162,4 +162,4 @@ tramp
 !.env.example
 
 # Project specific files
-coverage
+coverage/
