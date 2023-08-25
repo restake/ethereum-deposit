@@ -23,9 +23,10 @@
     "node": ">=18.17.0"
   },
   "scripts": {
-    "build": "tsup",
+    "lint": "eslint .",
     "test": "mocha",
-    "coverage": "c8 mocha"
+    "coverage": "c8 mocha",
+    "build": "tsup"
   },
   "author": "Restake <social@restake.net>",
   "license": "MIT",
