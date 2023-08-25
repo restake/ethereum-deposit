@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   node: "circleci/node@5.1.0"
+  codecov: "codecov/codecov@3.2.4"
 
 parameters:
   node_version:
@@ -51,8 +52,8 @@ jobs:
           name: "Install packages"
           command: pnpm install
       - run:
-          name: "Run all tests"
-          command: pnpm run test
+          name: "Run all tests with coverage"
+          command: pnpm run coverage
       - <<: *pnpm_save_cache
 
   lint:
@@ -137,7 +138,9 @@ workflows:
   build:
     jobs:
       - lint
-      - test
+      - test:
+          post-steps:
+            - codecov/upload
       - build:
           requires:
             - lint
