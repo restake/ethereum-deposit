@@ -1,6 +1,6 @@
 {
   "name": "@restake/ethereum-deposit",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Library for generating Ethereum deposit data",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
