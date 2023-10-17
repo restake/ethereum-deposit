@@ -9,6 +9,7 @@ const GOERLI = "goerli";
 const PRATER = "prater";
 const SEPOLIA = "sepolia";
 const ZHEJIANG = "zhejiang";
+const HOLESKY = "holesky";
 
 const MainnetSetting: BaseChainSetting = {
     NETWORK_NAME: MAINNET,
@@ -34,12 +35,19 @@ const ZhejiangSetting: BaseChainSetting = {
     GENESIS_VALIDATORS_ROOT: Uint8Array.from(Buffer.from("53a92d8f2bb1d85f62d16a156e6ebcd1bcaba652d0900b2c2f387826f3481f6f", "hex")),
 };
 
+const HoleskySetting: BaseChainSetting = {
+    NETWORK_NAME: HOLESKY,
+    GENESIS_FORK_VERSION: Uint8Array.from(Buffer.from("01017000", "hex")),
+    GENESIS_VALIDATORS_ROOT: Uint8Array.from(Buffer.from("9143aa7c615a7f7115e2b6aac319c03529df8242ae705fba9df39b79c59fa8b1", "hex")),
+};
+
 const ALL_CHAINS: Record<string, BaseChainSetting> = {
     [MAINNET]: MainnetSetting,
     [GOERLI]: GoerliSetting,
     [PRATER]: GoerliSetting,
     [SEPOLIA]: SepoliaSetting,
     [ZHEJIANG]: ZhejiangSetting,
+    [HOLESKY]: HoleskySetting,
 };
 
 export function getChainSetting(chainName: string = MAINNET): BaseChainSetting {
