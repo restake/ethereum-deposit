@@ -42,6 +42,16 @@ describe("Settings", () => {
         });
     });
 
+    it("holesky chain settings are correct", () => {
+        expect(getChainSetting("holesky")).to.deep.equal({
+            NETWORK_NAME: "holesky",
+            GENESIS_FORK_VERSION: Uint8Array.from(Buffer.from("01017000", "hex")),
+            GENESIS_VALIDATORS_ROOT: Uint8Array.from(
+                Buffer.from("9143aa7c615a7f7115e2b6aac319c03529df8242ae705fba9df39b79c59fa8b1", "hex"),
+            ),
+        });
+    });
+
     it("devnet chain settings are returned correctly", () => {
         const networkName = "devnet";
         const genesisForkVersion = "00000000";
