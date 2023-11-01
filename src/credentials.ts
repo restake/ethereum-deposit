@@ -11,6 +11,7 @@ export class Credential {
     withdrawalSecretKey: SecretKey;
     signingSecretKey: SecretKey;
     amount: number;
+    index: number;
     withdrawalAddressHex: string;
     chainSetting: BaseChainSetting;
 
@@ -20,6 +21,7 @@ export class Credential {
         this.withdrawalSecretKey = bls.SecretKey.fromBytes(withdrawal);
         this.signingSecretKey = bls.SecretKey.fromBytes(signing);
         this.amount = amount;
+        this.index = index;
         this.withdrawalAddressHex = withdrawalAddressHex;
         this.chainSetting = getChainSetting(chain);
     }
